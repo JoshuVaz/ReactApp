@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 21-05-2024 a las 08:42:48
+-- Tiempo de generación: 22-05-2024 a las 01:54:54
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -57,7 +57,115 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (1, '2014_10_12_000000_create_users_table', 1),
 (2, '2014_10_12_100000_create_password_resets_table', 1),
 (3, '2019_08_19_000000_create_failed_jobs_table', 1),
-(4, '2019_12_14_000001_create_personal_access_tokens_table', 1);
+(4, '2019_12_14_000001_create_personal_access_tokens_table', 1),
+(5, '2024_05_21_211523_add_role_to_users_table', 2),
+(6, '2016_06_01_000001_create_oauth_auth_codes_table', 3),
+(7, '2016_06_01_000002_create_oauth_access_tokens_table', 3),
+(8, '2016_06_01_000003_create_oauth_refresh_tokens_table', 3),
+(9, '2016_06_01_000004_create_oauth_clients_table', 3),
+(10, '2016_06_01_000005_create_oauth_personal_access_clients_table', 3),
+(11, '2024_05_21_233834_add_role_to_users_table', 4);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `oauth_access_tokens`
+--
+
+CREATE TABLE `oauth_access_tokens` (
+  `id` varchar(100) NOT NULL,
+  `user_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `client_id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `scopes` text DEFAULT NULL,
+  `revoked` tinyint(1) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `expires_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `oauth_access_tokens`
+--
+
+INSERT INTO `oauth_access_tokens` (`id`, `user_id`, `client_id`, `name`, `scopes`, `revoked`, `created_at`, `updated_at`, `expires_at`) VALUES
+('2a7d9b7a2e6c1f899be21747e525449a4f036663fde7f9953e318efce12c9a4fc65f7354c887a149', 5, 1, 'authToken', '[]', 0, '2024-05-22 04:38:01', '2024-05-22 04:38:01', '2025-05-21 22:38:01');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `oauth_auth_codes`
+--
+
+CREATE TABLE `oauth_auth_codes` (
+  `id` varchar(100) NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `client_id` bigint(20) UNSIGNED NOT NULL,
+  `scopes` text DEFAULT NULL,
+  `revoked` tinyint(1) NOT NULL,
+  `expires_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `oauth_clients`
+--
+
+CREATE TABLE `oauth_clients` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
+  `secret` varchar(100) DEFAULT NULL,
+  `provider` varchar(255) DEFAULT NULL,
+  `redirect` text NOT NULL,
+  `personal_access_client` tinyint(1) NOT NULL,
+  `password_client` tinyint(1) NOT NULL,
+  `revoked` tinyint(1) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `oauth_clients`
+--
+
+INSERT INTO `oauth_clients` (`id`, `user_id`, `name`, `secret`, `provider`, `redirect`, `personal_access_client`, `password_client`, `revoked`, `created_at`, `updated_at`) VALUES
+(1, NULL, 'Laravel Personal Access Client', 'nVUhHuCzS0B7yi4eF1Rg5u7WU9Ppq8qhAQeYiWZ4', NULL, 'http://localhost', 1, 0, 0, '2024-05-22 04:24:59', '2024-05-22 04:24:59'),
+(2, NULL, 'Laravel Password Grant Client', 'YtuRKyypwYb2tpWKFvj5zRInOunNW7gkeLGkga5Q', 'users', 'http://localhost', 0, 1, 0, '2024-05-22 04:24:59', '2024-05-22 04:24:59');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `oauth_personal_access_clients`
+--
+
+CREATE TABLE `oauth_personal_access_clients` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `client_id` bigint(20) UNSIGNED NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `oauth_personal_access_clients`
+--
+
+INSERT INTO `oauth_personal_access_clients` (`id`, `client_id`, `created_at`, `updated_at`) VALUES
+(1, 1, '2024-05-22 04:24:59', '2024-05-22 04:24:59');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `oauth_refresh_tokens`
+--
+
+CREATE TABLE `oauth_refresh_tokens` (
+  `id` varchar(100) NOT NULL,
+  `access_token_id` varchar(100) NOT NULL,
+  `revoked` tinyint(1) NOT NULL,
+  `expires_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -116,7 +224,15 @@ INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `n
 (19, 'App\\Models\\User', 2, 'authToken', '55a7eedf1a6f414a2b17cc9c5660fff3e82f8af6fa2a1463fce196637f5a725f', '[\"*\"]', '2024-05-21 09:47:48', NULL, '2024-05-21 09:47:47', '2024-05-21 09:47:48'),
 (20, 'App\\Models\\User', 4, 'authToken', '7e164346b4a6ee715e366159fb02628a5d965c9139d1ab6202169a91b1dd50f4', '[\"*\"]', '2024-05-21 11:13:12', NULL, '2024-05-21 11:13:11', '2024-05-21 11:13:12'),
 (21, 'App\\Models\\User', 4, 'authToken', '83f5c7e73dc6ea5546cb718f58eda1125ca1fff9dd84fadc8e228e7b93b47a69', '[\"*\"]', '2024-05-21 12:01:29', NULL, '2024-05-21 11:25:39', '2024-05-21 12:01:29'),
-(22, 'App\\Models\\User', 4, 'authToken', 'df33256bcec7e99c4336b09f231633ad1872dd397e9407182259cf4a27d7bd2a', '[\"*\"]', '2024-05-21 12:02:52', NULL, '2024-05-21 12:02:51', '2024-05-21 12:02:52');
+(22, 'App\\Models\\User', 4, 'authToken', 'df33256bcec7e99c4336b09f231633ad1872dd397e9407182259cf4a27d7bd2a', '[\"*\"]', '2024-05-21 12:02:52', NULL, '2024-05-21 12:02:51', '2024-05-21 12:02:52'),
+(23, 'App\\Models\\User', 4, 'authToken', '83bccd2ab7f83bb9fa8c2085f97e24d22f61fbfc98c6ab6c24963df690888359', '[\"*\"]', '2024-05-21 22:00:37', NULL, '2024-05-21 22:00:36', '2024-05-21 22:00:37'),
+(24, 'App\\Models\\User', 4, 'authToken', '22d94c3afa97ef22230afc93a8a31858826b1e629592c1460819fbc79c3a7fa2', '[\"*\"]', '2024-05-21 22:56:30', NULL, '2024-05-21 22:29:41', '2024-05-21 22:56:30'),
+(25, 'App\\Models\\User', 4, 'authToken', 'a5febfeb37fbf26a518ca785a99d0c295397bfbb689ae2b9808681a157dacd45', '[\"*\"]', '2024-05-21 23:04:17', NULL, '2024-05-21 22:56:52', '2024-05-21 23:04:17'),
+(26, 'App\\Models\\User', 4, 'authToken', '510e37d108f51e4e4a5e2f6d2593930e90ac8a50e334178a54d7b0a2d9bacc4f', '[\"*\"]', '2024-05-22 03:35:13', NULL, '2024-05-22 01:04:23', '2024-05-22 03:35:13'),
+(27, 'App\\Models\\User', 5, 'authToken', 'da3f71adc0ad14e489255b905b44d7a623943d6224df27a6eba63156b9f74d52', '[\"*\"]', '2024-05-22 05:25:58', NULL, '2024-05-22 03:36:19', '2024-05-22 05:25:58'),
+(28, 'App\\Models\\User', 5, 'authToken', 'f59a55a594a432aa50708211a6a7b4373cb7643b3a7ef0603ed40f848c3a8d3c', '[\"*\"]', '2024-05-22 05:26:28', NULL, '2024-05-22 05:26:27', '2024-05-22 05:26:28'),
+(29, 'App\\Models\\User', 5, 'authToken', '6cfad80ebc7149651dd6647cfe29b067248ab6eee7d414baf0918eb96e0b8182', '[\"*\"]', '2024-05-22 05:32:53', NULL, '2024-05-22 05:26:27', '2024-05-22 05:32:53'),
+(30, 'App\\Models\\User', 5, 'authToken', '5763bae254dc5f198a488907577b6d225cc590693af779cdd8f4643f16fab321', '[\"*\"]', '2024-05-22 05:51:36', NULL, '2024-05-22 05:33:24', '2024-05-22 05:51:36');
 
 -- --------------------------------------------------------
 
@@ -132,18 +248,20 @@ CREATE TABLE `users` (
   `password` varchar(255) NOT NULL,
   `remember_token` varchar(100) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `role` varchar(255) NOT NULL DEFAULT 'user'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'joshua', 'joshuapumas_@hotmail.com', NULL, '$2y$10$DBf.EBn2Nl/bvnQpJUQ1.OsoSW35PpAPmTxKaHgF.9N8PhHIYWrRa', NULL, '2024-05-21 06:19:13', '2024-05-21 06:19:13'),
-(2, 'joshuavazquez', 'joshua.vazquezc@hotmail.com', NULL, '$2y$10$z4mchhOtVY87r/VyUWnFfO.4Tz1zr92CJqzlGW9hABvfFRmEROje6', NULL, '2024-05-21 06:59:43', '2024-05-21 06:59:43'),
-(3, 'ana camacho', 'ana.camacho@hotmail.com', NULL, '$2y$10$dEHs2eLDYah6a/zJVsW59.M4qwaJdrE5XD.afRBpMhgI6udydkxU2', NULL, '2024-05-21 07:17:07', '2024-05-21 07:17:07'),
-(4, 'Prueba', 'prueba@hotmail.com', NULL, '$2y$10$lLquxL35WUYyldoChdpjDuqBUJiL7ryk2mDmLinfcdUt5jI4Puf/W', NULL, '2024-05-21 11:12:32', '2024-05-21 11:12:32');
+INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `role`) VALUES
+(1, 'joshua', 'joshuapumas_@hotmail.com', NULL, '$2y$10$DBf.EBn2Nl/bvnQpJUQ1.OsoSW35PpAPmTxKaHgF.9N8PhHIYWrRa', NULL, '2024-05-21 06:19:13', '2024-05-21 06:19:13', 'user'),
+(2, 'joshuavazquez', 'joshua.vazquezc@hotmail.com', NULL, '$2y$10$z4mchhOtVY87r/VyUWnFfO.4Tz1zr92CJqzlGW9hABvfFRmEROje6', NULL, '2024-05-21 06:59:43', '2024-05-21 06:59:43', 'user'),
+(3, 'ana camacho', 'ana.camacho@hotmail.com', NULL, '$2y$10$dEHs2eLDYah6a/zJVsW59.M4qwaJdrE5XD.afRBpMhgI6udydkxU2', NULL, '2024-05-21 07:17:07', '2024-05-21 07:17:07', 'user'),
+(4, 'Prueba', 'prueba@hotmail.com', NULL, '$2y$10$lLquxL35WUYyldoChdpjDuqBUJiL7ryk2mDmLinfcdUt5jI4Puf/W', NULL, '2024-05-21 11:12:32', '2024-05-21 11:12:32', 'user'),
+(5, 'Admin', 'admin@hotmail.com', NULL, '$2y$10$0hftnKtP2hgjhrKb3.yXkOYS/S5HU4MDXm3/V.YSmMquKDstJF.nG', NULL, '2024-05-22 03:36:05', '2024-05-22 03:36:05', 'admin');
 
 --
 -- Índices para tablas volcadas
@@ -161,6 +279,40 @@ ALTER TABLE `failed_jobs`
 --
 ALTER TABLE `migrations`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `oauth_access_tokens`
+--
+ALTER TABLE `oauth_access_tokens`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `oauth_access_tokens_user_id_index` (`user_id`);
+
+--
+-- Indices de la tabla `oauth_auth_codes`
+--
+ALTER TABLE `oauth_auth_codes`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `oauth_auth_codes_user_id_index` (`user_id`);
+
+--
+-- Indices de la tabla `oauth_clients`
+--
+ALTER TABLE `oauth_clients`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `oauth_clients_user_id_index` (`user_id`);
+
+--
+-- Indices de la tabla `oauth_personal_access_clients`
+--
+ALTER TABLE `oauth_personal_access_clients`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `oauth_refresh_tokens`
+--
+ALTER TABLE `oauth_refresh_tokens`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `oauth_refresh_tokens_access_token_id_index` (`access_token_id`);
 
 --
 -- Indices de la tabla `password_resets`
@@ -197,19 +349,31 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT de la tabla `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT de la tabla `oauth_clients`
+--
+ALTER TABLE `oauth_clients`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT de la tabla `oauth_personal_access_clients`
+--
+ALTER TABLE `oauth_personal_access_clients`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

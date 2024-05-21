@@ -1,32 +1,45 @@
 import React, { useState, useEffect } from 'react';
-import { Navbar, Nav, Container, Dropdown } from 'react-bootstrap';
+import { Navbar, Nav, Container, Dropdown, Table, Form } from 'react-bootstrap';
 import { MDBBtn, MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody } from 'mdb-react-ui-kit';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
-function Dashboard() {
-    const [user, setUser] = useState(null);
+
+function UserManagement() {
+    const [users, setUsers] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchUser = async () => {
+        const fetchUsers = async () => {
+            const token = localStorage.getItem('token');
             try {
-                const token = localStorage.getItem('token');
-                const response = await axios.get('http://localhost:8000/api/user', {
+                const response = await axios.get('http://localhost:8000/api/users', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-                setUser(response.data);
+                setUsers(response.data);
             } catch (error) {
-                console.error('There was an error fetching the user!', error);
-                navigate('/login');
+                console.error('Error fetching users:', error);
             }
         };
 
-        fetchUser();
-    }, [navigate]);
+        fetchUsers();
+    }, []);
 
+    const updateUserRole = async (userId, newRole) => {
+        const token = localStorage.getItem('token');
+        try {
+            await axios.patch(`http://localhost:8000/api/users/${userId}/role`, { role: newRole }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setUsers(users.map(user => user.id === userId ? { ...user, role: newRole } : user));
+        } catch (error) {
+            console.error('Error updating user role:', error);
+        }
+    };
     const handleLogout = async () => {
         const token = localStorage.getItem('token');
         try {
@@ -51,7 +64,7 @@ function Dashboard() {
     };
 
     return (
-        <MDBContainer fluid className="p-0 dashboard-container">
+        <div>
             <Navbar className="navbar-custom" expand="lg">
                 <Container>
                     <Navbar.Brand>Menu</Navbar.Brand>
@@ -77,37 +90,39 @@ function Dashboard() {
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
-            <Container className="dashboard-body">
-                {user && <h1 className="dashboard-welcome">Bievenido, {user.name}!</h1>}
-                <MDBRow>
-                    <MDBCol md="4">
-                        <MDBCard className="card-custom">
-                            <MDBCardBody>
-                                <h5>Card 1</h5>
-                                <p>Content for card 1.</p>
-                            </MDBCardBody>
-                        </MDBCard>
-                    </MDBCol>
-                    <MDBCol md="4">
-                        <MDBCard className="card-custom">
-                            <MDBCardBody>
-                                <h5>Card 2</h5>
-                                <p>Content for card 2.</p>
-                            </MDBCardBody>
-                        </MDBCard>
-                    </MDBCol>
-                    <MDBCol md="4">
-                        <MDBCard className="card-custom">
-                            <MDBCardBody>
-                                <h5>Card 3</h5>
-                                <p>Content for card 3.</p>
-                            </MDBCardBody>
-                        </MDBCard>
-                    </MDBCol>
-                </MDBRow>
-            </Container>
-        </MDBContainer>
+            <h2>User Management</h2>
+            <Table striped bordered hover>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {users.map(user => (
+                        <tr key={user.id}>
+                            <td>{user.id}</td>
+                            <td>{user.name}</td>
+                            <td>{user.email}</td>
+                            <td>{user.role}</td>
+                            <td>
+                                <Form.Select
+                                    value={user.role}
+                                    onChange={(e) => updateUserRole(user.id, e.target.value)}
+                                >
+                                    <option value="user">User</option>
+                                    <option value="admin">Admin</option>
+                                </Form.Select>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </Table>
+        </div>
     );
 }
 
-export default Dashboard;
+export default UserManagement;

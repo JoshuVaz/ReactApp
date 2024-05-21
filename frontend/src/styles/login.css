@@ -61,3 +61,41 @@
   background-color: hsla(0, 0%, 100%, 0.9) !important;
   backdrop-filter: saturate(200%) blur(25px);
 }
+
+/* Estilos de dashboard*/
+
+/* Estilos para el contenedor del dashboard */
+.dashboard-container {
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+/* Estilos para la barra de navegación */
+.navbar-custom {
+  background-color: #2900be;
+}
+
+.navbar-custom .navbar-brand,
+.navbar-custom .nav-link {
+  color: #ffffff;
+}
+
+/* Estilos para el cuerpo del dashboard */
+.dashboard-body {
+  padding: 20px;
+}
+
+.dashboard-welcome {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.card-custom {
+  margin-bottom: 20px;
+}
+
+.card-custom .card-body {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
