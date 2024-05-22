@@ -20,6 +20,9 @@ Para poder correr el proyecto necesitas tener instalado lo siguiente:
 
 > [!TIP]
 > El paquete de Node.js ya trae npm en su instalador por lo que ya no sera necesario instalarlo una vez instalado Node.js
+
+> [!IMPORTANT]
+> Recuerda usar la base de datos proporcionada para que puedas acceder o regitrarte, la base de datos es: laravelpr.sql
     
 ## Variable de Entorno
 
